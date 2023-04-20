@@ -17,33 +17,23 @@ section{
     flex-direction: column;
     margin-bottom: 100px;
 }
+/* select{
+    display: block;
+    font: inherit;
+    padding: 0 0.2em;
+    position: relative;
+} */
 
 .main{
     width: 1000px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    justify-self: center;
-    /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
-    grid-gap: 24px;
-    margin-bottom: 20px;
-    padding: 20px;
-    border: 1px solid #778899;
-}
-
-.card{
-    height: 100%;
-    width: 470px;
-    text-decoration: none;
-    border-radius: 3px;
-    padding: 0.5em 0.5em;
-    border-color: #fff;
-    color: #FFE4E1;
-    font-size: 17px;
-    background-color: #4b7e4b;
-    transition: box-shadow 0.18s;
-    box-shadow: 0 2px 8px rgba(0 0 0 / 0.2)
+    margin: 0 auto 20px; /*отступ снаружи элемента*/
+    display: grid; /*сетка*/
+    grid-template-columns: repeat(2, 1fr); /*количество и размер колонок в сетке*/
+    grid-template-rows: repeat(3, 1fr); /*количество и размер строк в сетке*/
+    justify-self: center; /*выравнивание по центру внутри контейнера*/
+    grid-gap: 24px; /*расстояние между ячейками сетки*/
+    padding: 20px; /*отступ внутри элемента*/
+    border: 1px solid #778899; /*граница*/
 }
 
 .mainBtn{
@@ -68,31 +58,35 @@ section{
     transition-duration: 0.18s;
     will-change: background-color, box-shadow, color;
 }
-.cards{
-    align-items: center;
-}
-.mainBtn:disabled{
-    cursor:not-allowed
-}
 
 .mainBtn:hover{
-    box-shadow: 0 2px 0 rgba(42, 79, 121, 0.48);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.48); /*добавляет тень к элементу при наведении*/
 }
 
 .mainBtn:focus{
-    background-color: #b4f483;
-    box-shadow: 0 1px 8px 0 rgba(42, 79, 121, 0.6);
+    background-color: #b4f483; /*меняет цвет при нажатии*/
+    box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.6);
 }
 
 .mainBtn:active{
     box-shadow: 0 0 0 transparent;
 }
 
-select{
-    display: block;
-    font: inherit;
-    padding: 0 0.2em;
-    position: relative;
+.card{
+    height: 100%;
+    width: 470px;
+    border-radius: 3px;
+    padding: 0.5em 0.5em;
+    border-color: #fff;
+    color: #fff;
+    font-size: 17px;
+    background-color: #4b7e4b;
+    transition: box-shadow 0.18s;
+    box-shadow: 0 2px 8px rgba(0 0 0 / 0.2)
+}
+
+.cards{
+    align-items: center;
 }
 
 .button{
@@ -100,9 +94,10 @@ select{
     background-position: center; /* позиционируем изображение по центру кнопки */
     width: 15px;
     height: 15px;
-    border: none;
-    margin: 0 5px 0 5px;
+    border: none; /*убираем границу*/
+    margin: 0 5px 0 5px; /*делаем отступ справа и слева*/
     cursor: pointer;
+    background-color: transparent; /*цвет по фону*/
 }
 
 .button:disabled{
@@ -119,28 +114,29 @@ select{
 
 .uncheckBtn {
     background-image: url("./img/bookmark-regular.svg");
-    background-color: #4b7e4b;
+    margin-right: 10px;
 }
+
 .checkBtn {
     background-image: url("./img/bookmark-solid.svg");
-    background-color: #4b7e4b;
+    margin-right: 10px;
 }
 
 .editBtn{
     background-image: url("./img/edit.svg");  
-    background-color: #4b7e4b; 
     float: right;  
 }
+
 .deleteBtn{
     background-image: url("./img/trash.svg");   
     float: right;
-    background-color: #4b7e4b;
 }
 
 .inputWithBtn{
     display: flex;
     align-items: center;
 }
+
 .inputWithBtn button{
     width: 30px; 
     height: 35px;
@@ -159,12 +155,13 @@ select{
 .addBtn{
     background-image: url("./img/plus.svg");   
 }
+
 .inputSearch{
     /* padding-right: 30px; */
     /* background-image: url('./img/search.svg'); */
     position: relative;
     padding: 0.5rem 0.5rem;
-    width: 380px;
+    width: 390px;
     height: 35px;
     background-color: white;
     border: 1px solid #FFE4E1;
@@ -176,11 +173,45 @@ select{
     transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s;
     z-index: 3;
     flex-grow: 1;
-    /* margin: 0 3px 3px 0; */
-    
+    margin-bottom: 5px;
     margin-right: 5px;
 }
 
-.inputSearch:focus{
+.inputSearch, .editInput:focus{
     border: 1px solid #FFC0CB;
+}
+
+/* .edit{
+    display: flex;
+    align-items: center;
+} */
+
+.editInput{
+    /* position: relative; */
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #FFE4E1;
+    background-color: white;
+    color: #080808;
+    padding: 4px;
+    font-size: 12px;
+    line-height: inherit;
+    appearance: none;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s;
+    z-index: 3;
+    flex-grow: 1;
+    margin-right: 5px;
+}
+
+.btnInEditInput{
+    background-image: url('./img/square-check-regular.svg');
+    background-repeat: no-repeat;
+    float: right;
+    position: absolute;
+    left: 100px;
+    margin-right: 10px;
+
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
