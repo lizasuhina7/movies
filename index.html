@@ -12,21 +12,24 @@
         <div class="main">
             <div id="plane">
                 <button class="mainBtn" id="btnPlane">Запланированные фильмы</button>
-                <div class="inputWithBtn" id="divWithBtnPlane" style="display:none">
-                    <input type="text" class="inputSearch" id="inputPlane">
-                    <button class="button searchBtn"></button>
-                    <button class="button addBtn"></button>
+                <div id="divWithBtnPlane" style="display:none">
+                    <div class="inputWithBtn">
+                        <input type="text" class="inputSearch" id="inputPlane" placeholder="Введите фильм в формате 'Фильм, год выхода'">
+                        <button class="button searchBtn"></button>
+                        <button class="button addBtn" id="addBtnPlane"></button>
+                    </div>
+                    <div class="cards" id="cardsPlane"></div>
                 </div>
-                <div class="cards"></div>
             </div>
             <div id="watch">
                 <button class="mainBtn" id="btnWatch">Просмотренные фильмы</button>
-                <div class="inputWithBtn" id="divWithBtnWatch" style="display:none">
-                    <input type="text" class="inputSearch" id="inputWatch">
-                    <button class="button searchBtn"></button>
-                    <button class="button addBtn"></button>
+                <div id="divWithBtnWatch" style="display:none">
+                    <div class="inputWithBtn">
+                        <input type="text" class="inputSearch" id="inputWatch">
+                        <button class="button searchBtn"></button>
+                    </div>
+                    <div class="cards" id="cardsWatch"></div>
                 </div>
-                <div class="cards"></div>
             </div>
         </div> 
     </section>
