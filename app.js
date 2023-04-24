@@ -14,7 +14,7 @@ const cardsWatch = document.getElementById('cardsWatch')
 
 const addBtnPlane = document.getElementById('addBtnPlane')
 
-const url = 'https://39c4-212-58-102-215.ngrok-free.app'
+const url = 'https://b273-212-58-102-215.ngrok-free.app'
 
 //кнопка для отмены изменений
 //по потери фокуса в инпуте, возврат к первоначальному значению
@@ -28,11 +28,11 @@ function createObj(nameMovie, year){
     }
     return obj
 }
-//сделать для check and uncheck movie
+
 //передавать в виде строки
-function createCard(name, year, id){
+function createCard(name, year, id, checked){
     return `
-    <button class="button uncheckBtn" name="${id}"></button> 
+    <button class="button ${checked}" name="${id}"></button> 
     <div class="edit" style="display: none">
         <input type="text" class="editInput" name=${id}>
         <button class="button btnEditInput" id="${id}"></button>
@@ -41,94 +41,110 @@ function createCard(name, year, id){
     <span>${name}, ${year}</span>
     <button class="button editBtn" name="${id}"></button>
     <button class="button deleteBtn" name="${id}"></button>
-`
+    `
 }
 
 function editMovie(){
     //изменение флажка и изменение в виде кнопки
-    if(this.className == 'button editBtn'){
-        //появление инпута и кнопок. скрытие предыдущих кнопок
-        //ввод, завершение процесса при помощи кнопки btnEditInput
-        //по потери фокуса инпут исчезает??(потом)
+    //появление инпута и кнопок. скрытие предыдущих кнопок
+    //ввод, завершение процесса при помощи кнопки btnEditInput
+    //по потери фокуса инпут исчезает??(потом)
 
-        //при нажатии на кнопку крестика, данные не сохранаются и не отправляются, остаются преждними. инпут уходит, возвращается обратно надпись с соотв кнопками
+    //при нажатии на кнопку крестика, данные не сохранаются и не отправляются, остаются преждними. инпут уходит, возвращается обратно надпись с соотв кнопками
 
-        const id = this.name
-        const parent = this.parentElement
-        const text = parent.querySelector('span')
-        const editInput = document.querySelector(`input[name="${id}"`)
-        const btns = document.querySelectorAll(`button[name="${id}"]`)
-        for(let i = 0; i < btns.length; i++){
-            btns[i].style.display = 'none'
-        }
-        editInput.parentElement.style.display = 'block'
-        editInput.value = text.innerHTML.trim()
-        text.innerHTML = ''
-        
-        const btnEditInput = document.getElementById(`${id}`)
-        btnEditInput.addEventListener('click', function(){
-            const id = this.id  
-            const inputValue = editInput.value
-            const inputValueSplited = inputValue.split(', ')
-            async function editMovie(id){
-                const response = await fetch(`${url}/movie/${id}`, {
-                    method: 'PATCH',
-                    headers: new Headers({
-                        "ngrok-skip-browser-warning": "69420",
-                        'Content-Type' : 'application/json'
-                    }),
-                    body: JSON.stringify(createObj(inputValueSplited[0], inputValueSplited[1]))
-                }) 
-        
-                if(response.status == 200){
-                    // const answer = await response.json()
-                    // if(answer){
-                        for(let i = 0; i < btns.length; i++){
-                            btns[i].style.display = 'inline-block'
-                        }
-                        parent.style.display = 'block'
-                        editInput.parentElement.style.display = 'none'
-                        text.innerHTML = inputValue
-                        // text.innerHTML = `${answer.movie_name}, ${answer.year}`
-                    // }
-                }
-            }
-            editMovie(id)
-        })
-    } else if(this.className == 'button uncheckBtn'){
-        const id = this.name
-        let classNameBtn = this.className
-        console.log(this.className)
-        async function checkedMovie(id){
-            const response = await fetch(`${url}/movie/${id}`, {
-                method: 'PATCH',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                    'Content-Type' : 'application/json'
-                }),
-                body: JSON.stringify({"is_seen": true})
-            })
-            console.log(response.status) 
-            if(response.status == 200){
-                classNameBtn = 'button checkBtn'
-                console.log(this)
-                // checkBtn
-                //картинка меняется, фильм переносится в другую колонку, исчезает из предыдущей
-            }
-        }
-        checkedMovie(id)
+    const id = this.name
+    const parent = this.parentElement
+    const text = parent.querySelector('span')
+    const editInput = document.querySelector(`input[name="${id}"`)
+    const btns = document.querySelectorAll(`button[name="${id}"]`)
+    for(let i = 0; i < btns.length; i++){
+        btns[i].style.display = 'none'
     }
+    const parentEditInput = editInput.parentElement
+    parentEditInput.style.display = 'block'
+    editInput.value = text.innerHTML.trim()
+    text.innerHTML = ''
+    
+    const btnEditInput = document.getElementById(`${id}`)
+    btnEditInput.addEventListener('click', function(){
+        const id = this.id  
+        const inputValue = editInput.value
+        const inputValueSplited = inputValue.split(', ')
+        async function editMovie(id){
+            const response = await request(`${url}/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], inputValueSplited[1]))
+            if(response.status == 200){
+                for(let i = 0; i < btns.length; i++){
+                    btns[i].style.display = 'inline-block'
+                }
+                parent.style.display = 'block'
+                parentEditInput.style.display = 'none'
+                text.innerHTML = inputValue
+            }
+        }
+        editMovie(id)
+    })
+}
+async function request(url, method,  body = {}){
+    console.log(method, url, body)
+    if(method == 'GET'){
+        const response = await fetch(`${url}`, {
+            method: method,
+            headers: new Headers({"ngrok-skip-browser-warning": "69420"})
+        }) 
+        return response
+    } else{
+        const response = await fetch(`${url}`, {
+        method: method,
+        headers: new Headers({
+            "ngrok-skip-browser-warning": "69420",
+            'Content-Type' : 'application/json'
+        }),
+        body: JSON.stringify(body)
+    }) 
+    return response}
+}
+        
+function editOnCheckedMovie(){
+    console.log(this.name)
+    const id = this.name
+    const button = this
+    async function checkedMovie(id){
+        const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": true})
+
+        if(response.status == 200){
+            button.className = 'button checkBtn'
+            setTimeout(() => {
+                button.parentElement.remove()
+                const clonedElement = button.parentElement.cloneNode(true);
+                cardsWatch.appendChild(clonedElement);
+            }, 1000)
+        }
+    }
+    checkedMovie(id)
+}
+
+function editOnUncheckedMovie(){
+    const id = this.name
+    const button = this
+    async function unCheckedMovie(id){
+        const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": false})
+
+        if(response.status == 200){
+            button.className = 'button uncheckBtn'
+            setTimeout(() => {
+                button.parentElement.remove()
+                const clonedElement = button.parentElement.cloneNode(true);
+                cardsPlane.appendChild(clonedElement);
+            }, 1000)
+        }
+    }
+    unCheckedMovie(id)
 }
 
 function deleteMovie(){
     const parent = this.parentElement
     async function deleteMovie(id){
-        const response = await fetch(`${url}/movie/${id}`, {
-        method: 'DELETE',
-        headers: new Headers({
-            "ngrok-skip-browser-warning": "69420"
-        }),
-    })
+        const response = await request(`${url}/movie/${id}`, 'DELETE')
         if(response.status == 204){
             parent.remove()
         } else{
@@ -138,41 +154,61 @@ function deleteMovie(){
     deleteMovie(this.name)
 }
 
+function eventForDeleteBtns(btns){
+    for(let i = 0; i < btns.length; i++){
+        btns[i].addEventListener('click', deleteMovie)
+    }
+}
+
+function eventForEditBtns(btns){
+    for(let i = 0; i < btns.length; i++){
+        btns[i].addEventListener('click', editMovie)
+    }
+}
+
+function eventForCheckBtns(btns){
+    for(let i = 0; i < btns.length; i++){
+        btns[i].addEventListener('click', editOnUncheckedMovie)
+    }
+}
+
+function eventForUncheckBtns(btns){
+    for(let i = 0; i < btns.length; i++){
+    btns[i].addEventListener('click', editOnCheckedMovie)
+}}
+
+function eventForAllButtonInCard(deletBtns, editBtns, checkedBtns){
+    eventForDeleteBtns(deletBtns)
+    eventForEditBtns(editBtns)
+
+    if(checkedBtns[0].className == 'button uncheckBtn'){
+        eventForUncheckBtns(checkedBtns)
+    } else{
+        eventForCheckBtns(checkedBtns)
+    }
+}
+
 //добавить событие на кнопку поиска
+//кнопка крестика в поле поиска, для обнуления
 for(let j = 0; j < searchBtns.length; j++){
     searchBtns[j].addEventListener('click', function(){
         
-        //убрать карточки предыдущие
     if(searchBtns[j].id == 'searchBtnPlane'){
         const param = inputPlane.value
         cardsPlane.innerHTML = ''
         async function search(){
-            const response = await fetch(`${url}/planned/?movie_name=${param}`, {
-                method: 'GET',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                })        
-            }) 
-    
+            const response = await request(`${url}/planned/?movie_name=${param}`, 'GET')
             if(response.status == 200){
                 const answer = await response.json()
                 for(let i = 0; i < answer.length; i++){
                     const card = document.createElement('div')
-                        card.className = 'card'
-                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id)
-                        cardsPlane.appendChild(card)
-                        const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                        for(let i = 0; i < deleteBtns.length; i++){
-                            deleteBtns[i].addEventListener('click', deleteMovie)
-                        }
-                        const editBtns = document.getElementsByClassName('button editBtn')
-                        for(let i = 0; i < editBtns.length; i++){
-                            editBtns[i].addEventListener('click', editMovie)
-                        }
-                        const checkBtns = document.getElementsByClassName('button uncheckBtn')
-                        for(let i = 0; i < checkBtns.length; i++){
-                            checkBtns[i].addEventListener('click', editMovie)
-                        }
+                    card.className = 'card'
+                    card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn')
+                    cardsPlane.appendChild(card)
+                    const deleteBtns = document.getElementsByClassName('button deleteBtn')
+                    const editBtns = document.getElementsByClassName('button editBtn')
+                    const checkBtns = document.getElementsByClassName('button uncheckBtn')
+                    eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                 }
             }
         }
@@ -181,32 +217,19 @@ for(let j = 0; j < searchBtns.length; j++){
         const param = inputWatch.value
         cardsWatch.innerHTML = ''
         async function search(){
-            const response = await fetch(`${url}/seen/?movie_name=${param}`, {
-                method: 'GET',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                })        
-            }) 
+            const response = await request(`${url}/seen/?movie_name=${param}`,'GET') 
     
             if(response.status == 200){
                 const answer = await response.json()
                 for(let i = 0; i < answer.length; i++){
                     const card = document.createElement('div')
-                        card.className = 'card'
-                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id)
-                        cardsWatch.appendChild(card)
-                        const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                        for(let i = 0; i < deleteBtns.length; i++){
-                            deleteBtns[i].addEventListener('click', deleteMovie)
-                        }
-                        const editBtns = document.getElementsByClassName('button editBtn')
-                        for(let i = 0; i < editBtns.length; i++){
-                            editBtns[i].addEventListener('click', editMovie)
-                        }
-                        const checkBtns = document.getElementsByClassName('button uncheckBtn')
-                        for(let i = 0; i < checkBtns.length; i++){
-                            checkBtns[i].addEventListener('click', editMovie)
-                        }
+                    card.className = 'card'
+                    card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'checkBtn')
+                    cardsWatch.appendChild(card)
+                    const deleteBtns = document.getElementsByClassName('button deleteBtn')
+                    const editBtns = document.getElementsByClassName('button editBtn')
+                    const checkBtns = document.getElementsByClassName('button checkBtn')
+                    eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                 }
             }
         }
@@ -238,7 +261,7 @@ for(let j = 0; j < searchBtns.length; j++){
 //         search()
 //     }, 1000);
 // })
-
+//после добавления не навешиваются события на кнопки
 addBtnPlane.addEventListener('click', () => {
     let inputPlaneValue = inputPlane.value
     if(inputPlaneValue != ''){
@@ -246,37 +269,22 @@ addBtnPlane.addEventListener('click', () => {
         console.log(splitedInput[0], splitedInput[1])
         
         async function addMovie(){
-            const response = await fetch(`${url}/movie`, {
-                method: 'POST',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                    'Content-Type' : 'application/json'
-                }),
-                body: JSON.stringify(createObj(splitedInput[0], splitedInput[1]))
-            })
+            const response = await request(`${url}/movie`, 'POST', createObj(splitedInput[0], splitedInput[1]))
             if(response.status == 200){
                 const answer = await response.json()
                 console.log(answer)
                 const div = document.createElement('div')
                 div.className = 'card'
-                div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id)
+                div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
+                // const deleteBtns = document.getElementsByClassName('button deleteBtn')
+                // const editBtns = document.getElementsByClassName('editInput')
+                // const checkBtns = document.getElementsByClassName('button uncheckBtn')
                 cardsPlane.appendChild(div)
                 inputPlane.value = ''
+                eventForAllButtonInCard(document.getElementsByClassName('button deleteBtn'), document.getElementsByClassName('editInput'), document.getElementsByClassName('button uncheckBtn'))
             }
         }
         addMovie()
-        const deleteBtns = document.getElementsByClassName('button deleteBtn')
-        for(let i = 0; i < deleteBtns.length; i++){
-            deleteBtns[i].addEventListener('click', deleteMovie)
-        }
-        const editBtns = document.getElementsByClassName('editInput')
-        for(let i = 0; i < editBtns.length; i++){
-            editBtns[i].addEventListener('click', editMovie)
-        }
-        const checkBtns = document.getElementsByClassName('button uncheckBtn')
-        for(let i = 0; i < checkBtns.length; i++){
-            checkBtns[i].addEventListener('click', editMovie)
-        }
     }
 })
 
@@ -287,37 +295,21 @@ planeBtn.addEventListener('click', function(){
 
         divWithBtnPlane.style.display = 'block'
         async function getPlaneMovies(){
-            const response = await fetch(`${url}/planned`, {
-                method: 'GET',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                })        
-            })
+            const response = await request(`${url}/planned`, 'GET')
 
             if(response.status == 200){
                 const answer = await response.json()
                 if(answer){
                     cardsPlane.innerHTML = ''
                     for(let i = 0; i < answer.length; i++){
-                        // if(answer[i].is_seen == false){
                         const card = document.createElement('div')
                         card.className = 'card'
-                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id)
+                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn')
                         cardsPlane.appendChild(card)
                         const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                        for(let i = 0; i < deleteBtns.length; i++){
-                            deleteBtns[i].addEventListener('click', deleteMovie)
-                        }
                         const editBtns = document.getElementsByClassName('button editBtn')
-                        for(let i = 0; i < editBtns.length; i++){
-                            editBtns[i].addEventListener('click', editMovie)
-                        }
-                        const checkBtns = document.getElementsByClassName('button uncheckBtn')
-                        for(let i = 0; i < checkBtns.length; i++){
-                            checkBtns[i].addEventListener('click', editMovie)
-                        }
-                        //добавить событие для кнопки перемещения между списками
-                        // }
+                        const uncheckBtns = document.getElementsByClassName('button uncheckBtn')
+                        eventForAllButtonInCard(deleteBtns, editBtns, uncheckBtns)
                     }
                 }
             } else{
@@ -337,33 +329,21 @@ watchBtn.addEventListener('click', function(){
 
         divWithBtnWatch.style.display = 'block'
         async function getPlaneMovies(){
-            const response = await fetch(`${url}/seen`, {
-                method: 'GET',
-                headers: new Headers({
-                    "ngrok-skip-browser-warning": "69420",
-                })   
-            })
+            const response = await request(`${url}/seen`, 'GET')
 
             if(response.status == 200){
                 const answer = await response.json()
                     if(answer){
                         cardsWatch.innerHTML = ''
                         for(let i = 0; i < answer.length; i++){
-                            // if(answer[i].is_seen == true){
                             const card = document.createElement('div')
                             card.className = 'card'
-                            card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id)
+                            card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'checkBtn')
                             cardsWatch.appendChild(card)
                             const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                            for(let i = 0; i < deleteBtns.length; i++){
-                                deleteBtns[i].addEventListener('click', deleteMovie)
-                            }
                             const editBtns = document.getElementsByClassName('button editBtn')
-                            for(let i = 0; i < editBtns.length; i++){
-                                editBtns[i].addEventListener('click', editMovie)
-                            }
-                            //добавить событие для кнопки перемещения между списками
-                            // }
+                            const checkBtns = document.getElementsByClassName('button checkBtn')
+                            eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                         }
                     }
             } else{
@@ -375,4 +355,3 @@ watchBtn.addEventListener('click', function(){
         divWithBtnWatch.style.display = 'none'
     }
 })
-
