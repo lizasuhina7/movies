@@ -85,6 +85,8 @@ section{
     box-shadow: 0 2px 8px rgba(0 0 0 / 0.2)
 }
 
+
+
 .cards{
     align-items: center;
 }
@@ -163,8 +165,6 @@ section{
 }
 
 .inputSearch{
-    /* padding-right: 30px; */
-    /* background-image: url('./img/search.svg'); */
     position: relative;
     padding: 0.5rem 0.5rem;
     width: 390px;
