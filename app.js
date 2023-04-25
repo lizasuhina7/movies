@@ -14,7 +14,7 @@ const cardsWatch = document.getElementById('cardsWatch')
 
 const addBtnPlane = document.getElementById('addBtnPlane')
 
-const url = 'https://b273-212-58-102-215.ngrok-free.app'
+const url = 'https://941f-212-58-102-215.ngrok-free.app'
 
 //кнопка для отмены изменений
 //по потери фокуса в инпуте, возврат к первоначальному значению
@@ -44,12 +44,25 @@ function createCard(name, year, id, checked){
     `
 }
 
-function editMovie(){
-    //изменение флажка и изменение в виде кнопки
-    //появление инпута и кнопок. скрытие предыдущих кнопок
-    //ввод, завершение процесса при помощи кнопки btnEditInput
-    //по потери фокуса инпут исчезает??(потом)
+async function request(url, method,  body = {}){
+    if(method == 'GET'){
+        const response = await fetch(`${url}`, {
+            method: method,
+            headers: new Headers({"ngrok-skip-browser-warning": "69420"})
+        }) 
+        return response
+    } else{
+        const response = await fetch(`${url}`, {
+            method: method,
+            headers: new Headers({"ngrok-skip-browser-warning": "69420", 'Content-Type' : 'application/json'}),
+            body: JSON.stringify(body)
+        }) 
+        return response
+    }
+}
 
+function editMovie(){
+    //по потери фокуса инпут исчезает??(потом)
     //при нажатии на кнопку крестика, данные не сохранаются и не отправляются, остаются преждними. инпут уходит, возвращается обратно надпись с соотв кнопками
 
     const id = this.name
@@ -72,6 +85,7 @@ function editMovie(){
         const inputValueSplited = inputValue.split(', ')
         async function editMovie(id){
             const response = await request(`${url}/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], inputValueSplited[1]))
+
             if(response.status == 200){
                 for(let i = 0; i < btns.length; i++){
                     btns[i].style.display = 'inline-block'
@@ -84,28 +98,9 @@ function editMovie(){
         editMovie(id)
     })
 }
-async function request(url, method,  body = {}){
-    console.log(method, url, body)
-    if(method == 'GET'){
-        const response = await fetch(`${url}`, {
-            method: method,
-            headers: new Headers({"ngrok-skip-browser-warning": "69420"})
-        }) 
-        return response
-    } else{
-        const response = await fetch(`${url}`, {
-        method: method,
-        headers: new Headers({
-            "ngrok-skip-browser-warning": "69420",
-            'Content-Type' : 'application/json'
-        }),
-        body: JSON.stringify(body)
-    }) 
-    return response}
-}
+
         
 function editOnCheckedMovie(){
-    console.log(this.name)
     const id = this.name
     const button = this
     async function checkedMovie(id){
@@ -154,37 +149,29 @@ function deleteMovie(){
     deleteMovie(this.name)
 }
 
-function eventForDeleteBtns(btns){
+function eventForBtns(btns, action){
+    const handlers = {
+        'delete': deleteMovie,
+        'edit': editMovie,
+        'uncheck': editOnCheckedMovie,
+        'check': editOnUncheckedMovie
+    }
+    const handler = handlers[action]
+
     for(let i = 0; i < btns.length; i++){
-        btns[i].addEventListener('click', deleteMovie)
+        btns[i].addEventListener('click', handler)
     }
 }
 
-function eventForEditBtns(btns){
-    for(let i = 0; i < btns.length; i++){
-        btns[i].addEventListener('click', editMovie)
-    }
-}
-
-function eventForCheckBtns(btns){
-    for(let i = 0; i < btns.length; i++){
-        btns[i].addEventListener('click', editOnUncheckedMovie)
-    }
-}
-
-function eventForUncheckBtns(btns){
-    for(let i = 0; i < btns.length; i++){
-    btns[i].addEventListener('click', editOnCheckedMovie)
-}}
 
 function eventForAllButtonInCard(deletBtns, editBtns, checkedBtns){
-    eventForDeleteBtns(deletBtns)
-    eventForEditBtns(editBtns)
+    eventForBtns(deletBtns, 'delete')
+    eventForBtns(editBtns, 'edit')
 
     if(checkedBtns[0].className == 'button uncheckBtn'){
-        eventForUncheckBtns(checkedBtns)
+        eventForBtns(checkedBtns, 'uncheck')
     } else{
-        eventForCheckBtns(checkedBtns)
+        eventForBtns(checkedBtns, 'check')
     }
 }
 
@@ -213,7 +200,7 @@ for(let j = 0; j < searchBtns.length; j++){
             }
         }
         search()
-    }else if(searchBtns[j].id == 'searchBtnWatch'){
+    } else if(searchBtns[j].id == 'searchBtnWatch'){
         const param = inputWatch.value
         cardsWatch.innerHTML = ''
         async function search(){
@@ -241,6 +228,9 @@ for(let j = 0; j < searchBtns.length; j++){
     // }, 1000);
     })
 }
+function getBtns(){
+
+}
 
 // inputPlane.addEventListener('change', function(){
 //     const param = inputPlane.value
@@ -261,12 +251,12 @@ for(let j = 0; j < searchBtns.length; j++){
 //         search()
 //     }, 1000);
 // })
-//после добавления не навешиваются события на кнопки
+
+
 addBtnPlane.addEventListener('click', () => {
     let inputPlaneValue = inputPlane.value
     if(inputPlaneValue != ''){
         const splitedInput = inputPlaneValue.split(', ')
-        console.log(splitedInput[0], splitedInput[1])
         
         async function addMovie(){
             const response = await request(`${url}/movie`, 'POST', createObj(splitedInput[0], splitedInput[1]))
@@ -276,12 +266,9 @@ addBtnPlane.addEventListener('click', () => {
                 const div = document.createElement('div')
                 div.className = 'card'
                 div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
-                // const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                // const editBtns = document.getElementsByClassName('editInput')
-                // const checkBtns = document.getElementsByClassName('button uncheckBtn')
                 cardsPlane.appendChild(div)
                 inputPlane.value = ''
-                eventForAllButtonInCard(document.getElementsByClassName('button deleteBtn'), document.getElementsByClassName('editInput'), document.getElementsByClassName('button uncheckBtn'))
+                eventForAllButtonInCard(document.getElementsByClassName('button deleteBtn'), document.getElementsByClassName('button editBtn'), document.getElementsByClassName('button uncheckBtn'))
             }
         }
         addMovie()
