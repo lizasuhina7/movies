@@ -1,5 +1,5 @@
-
-const searchBtns = document.getElementsByClassName('button searchBtn')
+const searchBtnPlane = document.getElementById('searchBtnPlane')
+const searchBtnWatch = document.getElementById('searchBtnWatch')
 const inputPlane = document.getElementById('inputPlane')
 const inputWatch = document.getElementById('inputWatch')
 
@@ -14,29 +14,28 @@ const cardsWatch = document.getElementById('cardsWatch')
 
 const addBtnPlane = document.getElementById('addBtnPlane')
 
-const url = 'https://941f-212-58-102-215.ngrok-free.app'
+const url = 'https://0d15-212-58-102-215.ngrok-free.app'
 
-//кнопка для отмены изменений
-//по потери фокуса в инпуте, возврат к первоначальному значению
-//подумать над тем, если ввод без года
+const btnDelete = 'button deleteBtn'
+const btnEdit = 'button editBtn'
+const checkBtn = 'button checkBtn'
+const uncheckBtn = 'button uncheckBtn'
 
-function createObj(nameMovie, year){
-    let obj = {
-        "movie_name": nameMovie,
-        "year": year,
-        "is_seen": false
-    }
-    return obj
-}
+//ошибка для пользователя
 
-//передавать в виде строки
-function createCard(name, year, id, checked){
+const createObj = (nameMovie, year = 0) => ({
+    "movie_name": nameMovie,
+    "year": year,
+    "is_seen": false
+})
+
+function createCard(name, year = 0, id, checked){
     return `
     <button class="button ${checked}" name="${id}"></button> 
     <div class="edit" style="display: none">
-        <input type="text" class="editInput" name=${id}>
+        <input type="text" maxlength="40" class="editInput" name=${id}>
         <button class="button btnEditInput" id="${id}"></button>
-        <button class="button btnCancelInput"></button>
+        <button class="button btnCancelInput" id="cancel ${id}"></button>
     </div>
     <span>${name}, ${year}</span>
     <button class="button editBtn" name="${id}"></button>
@@ -54,20 +53,20 @@ async function request(url, method,  body = {}){
     } else{
         const response = await fetch(`${url}`, {
             method: method,
-            headers: new Headers({"ngrok-skip-browser-warning": "69420", 'Content-Type' : 'application/json'}),
+            headers: new Headers({"ngrok-skip-browser-warning":"69420", 'Content-Type':'application/json'}),
             body: JSON.stringify(body)
         }) 
         return response
     }
 }
 
-function editMovie(){
-    //по потери фокуса инпут исчезает??(потом)
-    //при нажатии на кнопку крестика, данные не сохранаются и не отправляются, остаются преждними. инпут уходит, возвращается обратно надпись с соотв кнопками
+document.body.setAttribute('tabindex', '0')
 
+function editMovie(){
     const id = this.name
     const parent = this.parentElement
     const text = parent.querySelector('span')
+    const textInnerHTML = text.innerHTML
     const editInput = document.querySelector(`input[name="${id}"`)
     const btns = document.querySelectorAll(`button[name="${id}"]`)
     for(let i = 0; i < btns.length; i++){
@@ -78,28 +77,57 @@ function editMovie(){
     editInput.value = text.innerHTML.trim()
     text.innerHTML = ''
     
-    const btnEditInput = document.getElementById(`${id}`)
-    btnEditInput.addEventListener('click', function(){
-        const id = this.id  
+    const btnEditInput = document.getElementById(id)
+    btnEditInput.addEventListener('click', (event)=>{
+        const id = event.target.id 
         const inputValue = editInput.value
         const inputValueSplited = inputValue.split(', ')
-        async function editMovie(id){
-            const response = await request(`${url}/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], inputValueSplited[1]))
+        let year = inputValueSplited[1] || 0
 
-            if(response.status == 200){
-                for(let i = 0; i < btns.length; i++){
-                    btns[i].style.display = 'inline-block'
+        async function editMovie(id){
+            try{
+                const response = await request(`${url}/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], year))
+                if(response.status == 200){
+                    let answer = await response.json()
+                    for(let i = 0; i < btns.length; i++){
+                        btns[i].style.display = 'inline-block'
+                    }
+                    parent.style.display = 'block'
+                    parentEditInput.style.display = 'none'
+                    text.innerHTML = `${answer.movie_name}, ${answer.year}`
+                } else{
+                    throw new Error()
                 }
-                parent.style.display = 'block'
-                parentEditInput.style.display = 'none'
-                text.innerHTML = inputValue
+            } catch(error){
+                console.error(error.message)
+                alert('Error: '+ error.message)
             }
         }
         editMovie(id)
     })
-}
 
-        
+    const btnsCancelInput = document.getElementById(`cancel ${id}`)
+    btnsCancelInput.addEventListener('click', ()=>{
+        for(let i = 0; i < btns.length; i++){
+            btns[i].style.display = 'inline-block'
+        }
+        parent.style.display = 'block'
+        parentEditInput.style.display = 'none'
+        text.innerHTML = textInnerHTML
+    })
+    editInput.addEventListener('blur', () => {
+        const activElement = document.activeElement
+        if(activElement !== document.body){
+            for(let i = 0; i < btns.length; i++){
+                btns[i].style.display = 'inline-block'
+            }
+            parent.style.display = 'block'
+            parentEditInput.style.display = 'none'
+            text.innerHTML = textInnerHTML
+        }
+    })
+}
+  
 function editOnCheckedMovie(){
     const id = this.name
     const button = this
@@ -107,12 +135,13 @@ function editOnCheckedMovie(){
         const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": true})
 
         if(response.status == 200){
-            button.className = 'button checkBtn'
+            button.className = `${checkBtn}`
             setTimeout(() => {
                 button.parentElement.remove()
                 const clonedElement = button.parentElement.cloneNode(true);
                 cardsWatch.appendChild(clonedElement);
-            }, 1000)
+                eventForAllButtonInCard(clonedElement.getElementsByClassName(`${btnDelete}`), clonedElement.getElementsByClassName(`${btnEdit}`), clonedElement.getElementsByClassName(`${checkBtn}`))
+            }, 500)
         }
     }
     checkedMovie(id)
@@ -125,12 +154,13 @@ function editOnUncheckedMovie(){
         const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": false})
 
         if(response.status == 200){
-            button.className = 'button uncheckBtn'
+            button.className = `${uncheckBtn}`
             setTimeout(() => {
                 button.parentElement.remove()
                 const clonedElement = button.parentElement.cloneNode(true);
                 cardsPlane.appendChild(clonedElement);
-            }, 1000)
+                eventForAllButtonInCard(clonedElement.getElementsByClassName(`${btnDelete}`), clonedElement.getElementsByClassName(`${btnEdit}`), clonedElement.getElementsByClassName(`${uncheckBtn}`))
+            }, 500)
         }
     }
     unCheckedMovie(id)
@@ -163,27 +193,54 @@ function eventForBtns(btns, action){
     }
 }
 
-
 function eventForAllButtonInCard(deletBtns, editBtns, checkedBtns){
     eventForBtns(deletBtns, 'delete')
     eventForBtns(editBtns, 'edit')
-
-    if(checkedBtns[0].className == 'button uncheckBtn'){
+    
+    if(checkedBtns[0].className == `${uncheckBtn}`){
         eventForBtns(checkedBtns, 'uncheck')
     } else{
         eventForBtns(checkedBtns, 'check')
     }
 }
 
-//добавить событие на кнопку поиска
 //кнопка крестика в поле поиска, для обнуления
-for(let j = 0; j < searchBtns.length; j++){
-    searchBtns[j].addEventListener('click', function(){
-        
-    if(searchBtns[j].id == 'searchBtnPlane'){
-        const param = inputPlane.value
-        cardsPlane.innerHTML = ''
-        async function search(){
+inputPlane.addEventListener('input', function(){
+    if(inputPlane.value == ''){
+        async function returnAllCards(){
+            try{
+                const response = await request(`${url}/planned`, 'GET')
+                if(response.status == 200){
+                    const answer = await response.json()
+                    cardsPlane.innerHTML = '' // обнуление карточек перед вставкой новых
+                    for(let i = 0; i < answer.length; i++){
+                        const card = document.createElement('div') // создание карточки
+                        card.className = 'card' // присваивание класса карточке
+                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn') //создание текста карточки
+                        cardsPlane.appendChild(card)  //вставка карточки в колонку Plane
+                        const deleteBtns = document.getElementsByClassName(`${btnDelete}`) //обращение к кнопкам внутри карточек
+                        const editBtns = document.getElementsByClassName(`${btnEdit}`)
+                        const uncheckBtns = document.getElementsByClassName(`${uncheckBtn}`)
+                        eventForAllButtonInCard(deleteBtns, editBtns, uncheckBtns) // навешивание событий на кнопки внутри карточек
+                    }
+                } else{
+                    throw new Error()
+                }
+            } catch(error){
+                alert('Error: ' + error.message)
+                console.error(error.message)
+            }
+        }
+        returnAllCards()
+        console.log('Крестик был нажат')
+    }
+})
+searchBtnPlane.addEventListener('click', ()=>{
+    const param = inputPlane.value
+    cardsPlane.innerHTML = ''
+
+    async function search(){
+        try{
             const response = await request(`${url}/planned/?movie_name=${param}`, 'GET')
             if(response.status == 200){
                 const answer = await response.json()
@@ -192,18 +249,28 @@ for(let j = 0; j < searchBtns.length; j++){
                     card.className = 'card'
                     card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn')
                     cardsPlane.appendChild(card)
-                    const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                    const editBtns = document.getElementsByClassName('button editBtn')
-                    const checkBtns = document.getElementsByClassName('button uncheckBtn')
+                    const deleteBtns = document.getElementsByClassName(`${btnDelete}`)
+                    const editBtns = document.getElementsByClassName(`${btnEdit}`)
+                    const checkBtns = document.getElementsByClassName(`${uncheckBtn}`)
                     eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                 }
+            } else{
+                throw new Error()
             }
+        } catch(error){
+            console.error(error)
+            alert('Error: ' + error.message)
         }
-        search()
-    } else if(searchBtns[j].id == 'searchBtnWatch'){
-        const param = inputWatch.value
-        cardsWatch.innerHTML = ''
-        async function search(){
+    }
+    search()
+})
+
+searchBtnWatch.addEventListener('click', ()=>{
+    const param = inputWatch.value
+    cardsWatch.innerHTML = ''
+
+    async function search(){
+        try{
             const response = await request(`${url}/seen/?movie_name=${param}`,'GET') 
     
             if(response.status == 200){
@@ -213,62 +280,50 @@ for(let j = 0; j < searchBtns.length; j++){
                     card.className = 'card'
                     card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'checkBtn')
                     cardsWatch.appendChild(card)
-                    const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                    const editBtns = document.getElementsByClassName('button editBtn')
-                    const checkBtns = document.getElementsByClassName('button checkBtn')
+                    const deleteBtns = document.getElementsByClassName(`${btnDelete}`)
+                    const editBtns = document.getElementsByClassName(`${btnEdit}`)
+                    const checkBtns = document.getElementsByClassName(`${checkBtn}`)
                     eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                 }
+            } else{
+                throw new Error()
             }
+        } catch(error){
+            console.error(error)
+            alert('Error: ' + error.message)
         }
-        search()
     }
+    search()
+})   
+    
     
     // setTimeout(() => {
     //     search()
     // }, 1000);
-    })
-}
-function getBtns(){
-
-}
-
-// inputPlane.addEventListener('change', function(){
-//     const param = inputPlane.value
-//     async function search(){
-//         const response = await fetch(`${url}/planned/?movie_name=${param}`, {
-//             method: 'GET',
-//             headers: new Headers({
-//                 "ngrok-skip-browser-warning": "69420",
-//             })        
-//         }) 
-
-//         if(response.status == 200){
-//             const answer = response.json()
-//             console.log(answer)
-//         }
-//     }
-//     setTimeout(() => {
-//         search()
-//     }, 1000);
-// })
-
+ 
 
 addBtnPlane.addEventListener('click', () => {
     let inputPlaneValue = inputPlane.value
     if(inputPlaneValue != ''){
         const splitedInput = inputPlaneValue.split(', ')
-        
+        let year = splitedInput[1] || 0 //проверка на наличие 2го элемента массива splitedInput
         async function addMovie(){
-            const response = await request(`${url}/movie`, 'POST', createObj(splitedInput[0], splitedInput[1]))
-            if(response.status == 200){
-                const answer = await response.json()
-                console.log(answer)
-                const div = document.createElement('div')
-                div.className = 'card'
-                div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
-                cardsPlane.appendChild(div)
-                inputPlane.value = ''
-                eventForAllButtonInCard(document.getElementsByClassName('button deleteBtn'), document.getElementsByClassName('button editBtn'), document.getElementsByClassName('button uncheckBtn'))
+            try{
+                const response = await request(`${url}/movie`, 'POST', createObj(splitedInput[0], year))
+                if(response.status == 200){
+                    const answer = await response.json()
+                    const div = document.createElement('div')
+                    div.className = 'card'
+                    div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
+                    cardsPlane.appendChild(div)
+                    inputPlane.value = ''
+                    eventForAllButtonInCard(document.getElementsByClassName(`${btnDelete}`), document.getElementsByClassName(`${btnEdit}`), document.getElementsByClassName(`${uncheckBtn}`))
+                } else{
+                    throw new Error()
+                }
+            } catch(error){
+                console.error(error)
+                alert('Error: ' + error.message)
             }
         }
         addMovie()
@@ -282,28 +337,31 @@ planeBtn.addEventListener('click', function(){
 
         divWithBtnPlane.style.display = 'block'
         async function getPlaneMovies(){
-            const response = await request(`${url}/planned`, 'GET')
-
-            if(response.status == 200){
-                const answer = await response.json()
-                if(answer){
-                    cardsPlane.innerHTML = ''
+            try{
+                const response = await request(`${url}/planned`, 'GET') //ответ сервера
+    
+                if(response.status == 200){ //статуч ответа сервера
+                    const answer = await response.json() //получение ответа сервера в виде json
+                    cardsPlane.innerHTML = '' // обнуление карточек перед вставкой новых
                     for(let i = 0; i < answer.length; i++){
-                        const card = document.createElement('div')
-                        card.className = 'card'
-                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn')
-                        cardsPlane.appendChild(card)
-                        const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                        const editBtns = document.getElementsByClassName('button editBtn')
-                        const uncheckBtns = document.getElementsByClassName('button uncheckBtn')
-                        eventForAllButtonInCard(deleteBtns, editBtns, uncheckBtns)
+                        const card = document.createElement('div') // создание карточки
+                        card.className = 'card' // присваивание класса карточке
+                        card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'uncheckBtn') //создание текста карточки
+                        cardsPlane.appendChild(card)  //вставка карточки в колонку Plane
+                        const deleteBtns = document.getElementsByClassName(`${btnDelete}`) //обращение к кнопкам внутри карточек
+                        const editBtns = document.getElementsByClassName(`${btnEdit}`)
+                        const uncheckBtns = document.getElementsByClassName(`${uncheckBtn}`)
+                        eventForAllButtonInCard(deleteBtns, editBtns, uncheckBtns) // навешивание событий на кнопки внутри карточек
                     }
+                } else{
+                    throw new Error()
                 }
-            } else{
-                console.error('error')
+            } catch(error){
+                console.error(error)
+                alert('Error: ' + error.message)
             }
         }
-        getPlaneMovies()
+        getPlaneMovies() // вызов асинхронной функции при клике на кнопку planeBtn, при условии, что 
     } else{
         divWithBtnPlane.style.display = 'none'
     }
@@ -316,25 +374,28 @@ watchBtn.addEventListener('click', function(){
 
         divWithBtnWatch.style.display = 'block'
         async function getPlaneMovies(){
-            const response = await request(`${url}/seen`, 'GET')
-
-            if(response.status == 200){
-                const answer = await response.json()
-                    if(answer){
+            try{
+                const response = await request(`${url}/seen`, 'GET')
+    
+                if(response.status == 200){
+                    const answer = await response.json()
                         cardsWatch.innerHTML = ''
                         for(let i = 0; i < answer.length; i++){
                             const card = document.createElement('div')
                             card.className = 'card'
                             card.innerHTML = createCard(answer[i].movie_name, answer[i].year, answer[i].movie_id, 'checkBtn')
                             cardsWatch.appendChild(card)
-                            const deleteBtns = document.getElementsByClassName('button deleteBtn')
-                            const editBtns = document.getElementsByClassName('button editBtn')
-                            const checkBtns = document.getElementsByClassName('button checkBtn')
+                            const deleteBtns = document.getElementsByClassName(`${btnDelete}`)
+                            const editBtns = document.getElementsByClassName(`${btnEdit}`)
+                            const checkBtns = document.getElementsByClassName(`${checkBtn}`)
                             eventForAllButtonInCard(deleteBtns, editBtns, checkBtns)
                         }
-                    }
-            } else{
-                console.error('error')
+                } else{
+                    throw new Error()
+                }
+            } catch(error){
+                console.error(error)
+                alert('Error: ' + error.message)
             }
         }
         getPlaneMovies()
