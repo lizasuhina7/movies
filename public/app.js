@@ -14,7 +14,7 @@ const cardsWatch = document.getElementById('cardsWatch')
 
 const addBtnPlane = document.getElementById('addBtnPlane')
 
-const url = 'https://0d15-212-58-102-215.ngrok-free.app'
+const url = 'http://51.250.108.47'
 
 const btnDelete = 'button deleteBtn'
 const btnEdit = 'button editBtn'
@@ -33,7 +33,7 @@ function createCard(name, year = 0, id, checked){
     return `
     <button class="button ${checked}" name="${id}"></button> 
     <div class="edit" style="display: none">
-        <input type="text" maxlength="40" class="editInput" name=${id}>
+        <input type="text" minlength="5" maxlength="40" class="editInput" name=${id}>
         <button class="button btnEditInput" id="${id}"></button>
         <button class="button btnCancelInput" id="cancel ${id}"></button>
     </div>
@@ -45,15 +45,17 @@ function createCard(name, year = 0, id, checked){
 
 async function request(url, method,  body = {}){
     if(method == 'GET'){
+        const token = localStorage.getItem('token')
         const response = await fetch(`${url}`, {
             method: method,
-            headers: new Headers({"ngrok-skip-browser-warning": "69420"})
+            headers: new Headers({"Authorization": `Bearer ${token}`})
         }) 
         return response
     } else{
+        const token = localStorage.getItem('token')
         const response = await fetch(`${url}`, {
             method: method,
-            headers: new Headers({"ngrok-skip-browser-warning":"69420", 'Content-Type':'application/json'}),
+            headers: new Headers({"Authorization": `Bearer ${token}`, 'Content-Type':'application/json'}),
             body: JSON.stringify(body)
         }) 
         return response
@@ -232,9 +234,9 @@ inputPlane.addEventListener('input', function(){
             }
         }
         returnAllCards()
-        console.log('Крестик был нажат')
     }
 })
+
 searchBtnPlane.addEventListener('click', ()=>{
     const param = inputPlane.value
     cardsPlane.innerHTML = ''
@@ -402,4 +404,17 @@ watchBtn.addEventListener('click', function(){
     } else{
         divWithBtnWatch.style.display = 'none'
     }
+})
+
+const exitBtn = document.getElementById('exit')
+exitBtn.addEventListener('click', function(){
+    async function logoutUser(){
+        const response = await request(`${url}/auth/logout`, 'POST')
+        if(response.status == 200){
+            console.log(response)
+            window.location.href = 'http://localhost:5000/'
+            localStorage.removeItem('token')
+        }
+    }
+    logoutUser()
 })

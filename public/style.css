@@ -85,8 +85,6 @@ section{
     box-shadow: 0 2px 8px rgba(0 0 0 / 0.2)
 }
 
-
-
 .cards{
     align-items: center;
 }
@@ -115,7 +113,7 @@ section{
 }
 
 .uncheckBtn {
-    background-image: url("./img/radio_button_unchecked.svg");
+    background-image: url("./img/eye-slash-regular.svg");
     background-size: cover;
     width: 18px;
     height: 18px;
@@ -123,7 +121,7 @@ section{
 }
 
 .checkBtn {
-    background-image: url("./img/radio_button_checked.svg");
+    background-image: url("./img/eye-regular.svg");
     background-size: cover;
     width: 18px;
     height: 18px;
@@ -226,3 +224,54 @@ section{
 .btnCancelInput{
     background-image: url('./img/cancel2.svg')
 }
+
+form h1{
+    font-weight: bold;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+form{
+    max-width: 300px;
+    max-height: 800px;
+    background-color: #fff;
+    padding: 10px;
+    /* padding-left: 50px; */
+    margin: 100px auto;
+    overflow-y: auto;
+    color: #4b7e4b;
+    border-radius: 3px;
+}
+form div, button{
+    margin: 10px auto 10px 50px;
+}
+form button{
+    width: auto;
+    height: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #4b7e4b;
+    border: none;
+    color:#fff;
+    margin-top: 10px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+}
+form button:hover{
+    background-color: #345734; /* Green */
+    color: #fff;
+    border: none;
+    box-shadow: 0 1px 8px 0 rgba(42, 79, 121, 0.6)
+}
+form input{
+    width: 200px;
+}
+form a{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+form
