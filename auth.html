@@ -17,8 +17,10 @@
         <div>
             <label for="password">Пароль:</label>
             <input type="password" required id="password" name="password" placeholder="Введите пароль">
+            <div class="showPass">Показать пароль</div>
+            <div class="wrongPass" style="display:none">Неверный email или пароль</div>
         </div>
-        <button>Вход</button>
+        <button type="submit">Вход</button>
         <a href="#" id="registerStr">Регистрация</a>
     </form>
     <script src="auth.js"></script>

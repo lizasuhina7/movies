@@ -14,15 +14,18 @@
             <label for="email">Email:</label>
             <input type="email" required name="email" id="email" placeholder="Введите email">
         </div>
+        <div id="alreadyCreateUser">Пользователь с таким email уже зарегистрирован</div>
         <div>
             <label for="password">Пароль:</label>
-            <input type="password" required name="password" id="password" placeholder="Введите пароль">
+            <input type="password" required name="password" id="password1" placeholder="Введите пароль">
+            <div class="showPass">Показать пароль</div>
         </div>
         <div>
             <label for="password">Подтвердите пароль:</label>
-            <input type="password" required name="password" placeholder="Введите пароль">
+            <input type="password" required name="password" id="password2" placeholder="Введите пароль">
         </div>
-        <button>Регистрация</button>
+        <div id="difference">Пароли не совпадают</div>
+        <button type="submit">Регистрация</button>
     </form>
     <script src="reg.js"></script>
 </body>

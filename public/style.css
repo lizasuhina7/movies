@@ -272,6 +272,29 @@ form input{
 form a{
     text-decoration: underline;
     cursor: pointer;
+    color:#345734;
+    margin-left: 5px;
 }
 
-form
+form .showPass{
+    text-decoration: underline;
+    cursor: pointer;
+}
+form .wrongPass{
+    display: none;
+    color: red;
+    text-align: center;
+    margin-left: 0;
+}
+form #alreadyCreateUser{
+    display: none;
+    color: red;
+    text-align: center;
+    margin-left: 0;
+}
+form #difference{
+    display: none;
+    color: red;
+    text-align: center;
+    margin-left: 0;
+}
