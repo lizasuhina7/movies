@@ -5,6 +5,8 @@ const alreadyCreate = form.querySelector('#alreadyCreateUser')
 const showPass = form.querySelector('.showPass')
 
 const url = 'http://51.250.108.47'
+//const url = 'http://localhost:8003'
+
 
 form.addEventListener('submit', function(event){
     event.preventDefault()
@@ -18,7 +20,7 @@ form.addEventListener('submit', function(event){
 
     if(password1 == password2){
         async function getAnswer(){
-            const response = await fetch(`${url}/auth/register`, {
+            const response = await fetch(`${url}/api/auth/register`, {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({
@@ -27,7 +29,7 @@ form.addEventListener('submit', function(event){
             })
             
             if(response.status == 201){
-                window.location.href = 'http://localhost:5000/'
+                window.location.href = url
             } else if(response.status == 400){
                 // const answer = await response.json()
                 // if (answer.detail.msg == 'value is not a valid email address'){
