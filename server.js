@@ -17,9 +17,9 @@ app.get('/main', (req, res)=>{
     res.sendFile(__dirname + '/index.html')
 })
 
-
 const HOST = 'localhost'
 const PORT = 5000
+
 app.listen(PORT, () => {
     console.log(`Сервер запущен по адресу http://${HOST}:${PORT}`)
 })

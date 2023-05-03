@@ -9,9 +9,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const planeBtn = document.getElementById('btnPlane')
         const watchBtn = document.getElementById('btnWatch')
 
-        const plane = document.getElementById('plane')
-        const watch = document.getElementById('watch')
-
         const cardsPlane = document.getElementById('cardsPlane')
         const cardsWatch = document.getElementById('cardsWatch')
 
@@ -209,7 +206,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        //кнопка крестика в поле поиска, для обнуления
         inputPlane.addEventListener('input', function(){
             if(inputPlane.value == ''){
                 async function returnAllCards(){
@@ -300,12 +296,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
             search()
         })   
-            
-            
-            // setTimeout(() => {
-            //     search()
-            // }, 1000);
-        
 
         addBtnPlane.addEventListener('click', () => {
             let inputPlaneValue = inputPlane.value
@@ -334,7 +324,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 addMovie()
             }
         })
-
 
         planeBtn.addEventListener('click', function(){
             const divWithBtnPlane = document.getElementById('divWithBtnPlane')
@@ -371,7 +360,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 divWithBtnPlane.style.display = 'none'
             }
         })
-
 
         watchBtn.addEventListener('click', function(){
             const divWithBtnWatch = document.getElementById('divWithBtnWatch')
@@ -414,7 +402,6 @@ window.addEventListener('DOMContentLoaded', () => {
             async function logoutUser(){
                 const response = await request(`${url}/auth/logout`, 'POST')
                 if(response.status == 200){
-                    console.log(response)
                     window.location.href = 'http://localhost:5000/'
                     localStorage.removeItem('token')
                 }

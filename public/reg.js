@@ -1,8 +1,8 @@
 const form = document.querySelector('form')
 const diff = form.querySelector('#difference')
-const registerStr = document.getElementById('registerStr')
+const registerStr = form.querySelector('#registerStr')
 const alreadyCreate = form.querySelector('#alreadyCreateUser')
-
+const showPass = form.querySelector('.showPass')
 
 const url = 'http://51.250.108.47'
 
@@ -29,10 +29,10 @@ form.addEventListener('submit', function(event){
             if(response.status == 201){
                 window.location.href = 'http://localhost:5000/'
             } else if(response.status == 400){
-                const answer = await response.json()
-                console.log(answer.detail)
-                //value is not a valid email address
-                alreadyCreate.style.display = 'block'
+                // const answer = await response.json()
+                // if (answer.detail.msg == 'value is not a valid email address'){
+                    alreadyCreate.style.display = 'block'
+                // }
             }
         }
         getAnswer()
@@ -41,7 +41,7 @@ form.addEventListener('submit', function(event){
     }
 })
 
-form.querySelector('.showPass').addEventListener('click', ()=>{
+showPass.addEventListener('click', ()=>{
     const passwordInput = form.querySelector('#password1')
     if(passwordInput.type == 'password'){
         passwordInput.type = 'text'
