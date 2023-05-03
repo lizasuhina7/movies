@@ -14,8 +14,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const addBtnPlane = document.getElementById('addBtnPlane')
 
-        const url = 'http://51.250.108.47'
-
+	const url = 'http://51.250.108.47'
+	//const url = 'http://localhost:8003'
         const btnDelete = 'button deleteBtn'
         const btnEdit = 'button editBtn'
         const checkBtn = 'button checkBtn'
@@ -88,7 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 async function editMovie(id){
                     try{
-                        const response = await request(`${url}/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], year))
+                        const response = await request(`${url}/api/movie/${id}`, 'PATCH', createObj(inputValueSplited[0], year))
                         if(response.status == 200){
                             let answer = await response.json()
                             for(let i = 0; i < btns.length; i++){
@@ -134,7 +134,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const id = this.name
             const button = this
             async function checkedMovie(id){
-                const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": true})
+                const response = await request(`${url}/api/movie/${id}`, 'PATCH', {"is_seen": true})
 
                 if(response.status == 200){
                     button.className = `${checkBtn}`
@@ -153,7 +153,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const id = this.name
             const button = this
             async function unCheckedMovie(id){
-                const response = await request(`${url}/movie/${id}`, 'PATCH', {"is_seen": false})
+                const response = await request(`${url}/api/movie/${id}`, 'PATCH', {"is_seen": false})
 
                 if(response.status == 200){
                     button.className = `${uncheckBtn}`
@@ -171,7 +171,7 @@ window.addEventListener('DOMContentLoaded', () => {
         function deleteMovie(){
             const parent = this.parentElement
             async function deleteMovie(id){
-                const response = await request(`${url}/movie/${id}`, 'DELETE')
+                const response = await request(`${url}/api/movie/${id}`, 'DELETE')
                 if(response.status == 204){
                     parent.remove()
                 } else{
@@ -210,7 +210,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if(inputPlane.value == ''){
                 async function returnAllCards(){
                     try{
-                        const response = await request(`${url}/planned`, 'GET')
+                        const response = await request(`${url}/api/planned`, 'GET')
                         if(response.status == 200){
                             const answer = await response.json()
                             cardsPlane.innerHTML = '' // обнуление карточек перед вставкой новых
@@ -242,7 +242,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             async function search(){
                 try{
-                    const response = await request(`${url}/planned/?movie_name=${param}`, 'GET')
+                    const response = await request(`${url}/api/planned/?movie_name=${param}`, 'GET')
                     if(response.status == 200){
                         const answer = await response.json()
                         for(let i = 0; i < answer.length; i++){
@@ -272,7 +272,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             async function search(){
                 try{
-                    const response = await request(`${url}/seen/?movie_name=${param}`,'GET') 
+                    const response = await request(`${url}/api/seen/?movie_name=${param}`,'GET') 
             
                     if(response.status == 200){
                         const answer = await response.json()
@@ -304,7 +304,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 let year = splitedInput[1] || 0 //проверка на наличие 2го элемента массива splitedInput
                 async function addMovie(){
                     try{
-                        const response = await request(`${url}/movie`, 'POST', createObj(splitedInput[0], year))
+                        const response = await request(`${url}/api/movie`, 'POST', createObj(splitedInput[0], year))
                         if(response.status == 200){
                             const answer = await response.json()
                             const div = document.createElement('div')
@@ -332,7 +332,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 divWithBtnPlane.style.display = 'block'
                 async function getPlaneMovies(){
                     try{
-                        const response = await request(`${url}/planned`, 'GET') //ответ сервера
+                        const response = await request(`${url}/api/planned`, 'GET') //ответ сервера
             
                         if(response.status == 200){ //статуч ответа сервера
                             const answer = await response.json() //получение ответа сервера в виде json
@@ -368,7 +368,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 divWithBtnWatch.style.display = 'block'
                 async function getPlaneMovies(){
                     try{
-                        const response = await request(`${url}/seen`, 'GET')
+                        const response = await request(`${url}/api/seen`, 'GET')
             
                         if(response.status == 200){
                             const answer = await response.json()
@@ -400,9 +400,9 @@ window.addEventListener('DOMContentLoaded', () => {
         const exitBtn = document.getElementById('exit')
         exitBtn.addEventListener('click', function(){
             async function logoutUser(){
-                const response = await request(`${url}/auth/logout`, 'POST')
+                const response = await request(`${url}/api/auth/logout`, 'POST')
                 if(response.status == 200){
-                    window.location.href = 'http://localhost:5000/'
+                    window.location.href = url
                     localStorage.removeItem('token')
                 }
             }
@@ -410,6 +410,6 @@ window.addEventListener('DOMContentLoaded', () => {
         })
 
     } else{
-        window.location.href = 'http://localhost:5000/'
+        window.location.href = url
     }
 })

@@ -4,6 +4,7 @@ const wrongPass = form.querySelector('.wrongPass')
 const showPass = form.querySelector('.showPass')
 
 const url = 'http://51.250.108.47'
+//const url = 'http://localhost:8003'
 
 form.addEventListener('submit', function(event){
     event.preventDefault()
@@ -19,7 +20,7 @@ form.addEventListener('submit', function(event){
     formData.set('password', password);
 
     async function getAnswer(){
-        const response = await fetch(`${url}/auth/login`, {
+        const response = await fetch(`${url}/api/auth/login`, {
             method: 'POST',
             // headers: {'Content-Type':'multipart/form-data'},
             body: formData
@@ -29,7 +30,7 @@ form.addEventListener('submit', function(event){
             const answer = await response.json()
             const token = answer.access_token
             localStorage.setItem('token', token)//сохранение токена в локальном хранилище
-            window.location.href = 'http://localhost:5000/main'
+            window.location.href = `${url}/main`
         } else if(response.status == 400){
             // const answer = await response.json()
             // if(answer.detail.msg == 'LOGIN_BAD_CREDENTIALS'){
@@ -44,7 +45,7 @@ form.addEventListener('submit', function(event){
 })
 
 registerStr.addEventListener('click', () => {
-    window.location.href = 'http://localhost:5000/register'
+    window.location.href = `${url}/register`
 })
 
 showPass.addEventListener('click', ()=>{
