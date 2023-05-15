@@ -74,7 +74,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 btns[i].style.display = 'none'
             }
             const parentEditInput = editInput.parentElement
-            parentEditInput.style.display = 'block'
+            parentEditInput.style.display = 'flex'
             editInput.value = text.innerHTML.trim()
             text.innerHTML = ''
             
@@ -329,6 +329,8 @@ window.addEventListener('DOMContentLoaded', () => {
                                     div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
                                     cardsPlane.appendChild(div)
                                     eventForAllButtonInCard(document.getElementsByClassName(`${btnDelete}`), document.getElementsByClassName(`${btnEdit}`), document.getElementsByClassName(`${uncheckBtn}`))
+                                    nameInput.value = ''
+                                    yearInput.value = ''
                                 } else{
                                     throw new Error()
                                 }

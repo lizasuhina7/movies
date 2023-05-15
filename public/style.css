@@ -385,6 +385,7 @@ header #exit{
     height: 20px;
     border-radius: 3px;
     margin: 0;
+    cursor: pointer;
 }
 
 #inputAddName{
