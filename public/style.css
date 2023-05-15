@@ -1,3 +1,77 @@
+/* @media (max-width: 1200px){
+    .main{
+        width: 1000px;
+        margin: 0 auto 20px;
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-rows: repeat(3, 1fr);
+        grid-gap: 24px;
+    }
+}
+@media (max-width: 1000px){
+    .main{
+        width: 800px;
+        margin: 0 auto 10px;
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-rows: repeat(3, 1fr);
+        grid-gap: 24px;
+    }
+}
+@media (max-width: 768px){
+    .main{
+        width: 568px;
+        margin: 0 auto 5px;
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-rows: auto;
+        grid-gap: 12px;
+    }
+}
+@media (max-width: 480px){
+    .main{
+        width: 380px;
+        margin: 0 auto 2px;
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-rows: auto;
+        grid-gap: 12px;
+    }
+} */
+/* @media only screen and (max-width: 768px) {
+    body {
+        padding: 20px;
+        width: 100%;
+        height: 100%;
+    }
+    section{
+        width: 375px;
+    }
+    section div, button, input{
+        width: 100%;
+    }
+    .main {
+        width: 100%;
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-rows: auto;
+        grid-gap: 12px;
+    }
+    
+    .mainBtn {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+        font-size: 12px;
+    }
+    
+    .card {
+        width: 100%;
+        font-size: 14px;
+    }
+    
+    .inputWithBtn input[type="text"] {
+        width: 100%;
+        max-width: 80%;
+        font-size: 14px;
+    }
+} */
+
 html{
     box-sizing: border-box;
 }
@@ -17,31 +91,30 @@ section{
     flex-direction: column;
     margin-bottom: 100px;
 }
-/* select{
-    display: block;
-    font: inherit;
-    padding: 0 0.2em;
-    position: relative;
-} */
 
 .main{
     width: 1000px;
-    margin: 0 auto 20px; /*отступ снаружи элемента*/
+    height: 100%;
+    margin: auto;
+    margin: 0 auto 20px; 
+    /*отступ снаружи элемента*/
     display: grid; /*сетка*/
-    grid-template-columns: repeat(2, 1fr); /*количество и размер колонок в сетке*/
-    grid-template-rows: repeat(3, 1fr); /*количество и размер строк в сетке*/
+    grid-template-columns: repeat(2, 1fr);
+     /*количество и размер колонок в сетке*/
+    grid-template-rows: repeat(3, 1fr);
+     /*количество и размер строк в сетке*/
     justify-self: center; /*выравнивание по центру внутри контейнера*/
     grid-gap: 24px; /*расстояние между ячейками сетки*/
-    padding: 20px; /*отступ внутри элемента*/
+    padding: 15px; /*отступ внутри элемента*/
     border: 1px solid #778899; /*граница*/
 }
 
 .mainBtn{
-    width: 450px;
+    width: 100%;
+    max-width: 450px;
     padding: 10px 10px;
-    max-width: 400px;
     border: none;
-    margin: 20px auto 20px auto;
+    margin: 15px auto 15px auto;
     display: block;
     border-radius: 3px;
     font-family: Arial, Helvetica, sans-serif;
@@ -76,7 +149,7 @@ section{
     height: 100%;
     width: 470px;
     border-radius: 3px;
-    padding: 0.5em 0.5em;
+    padding: 5px;
     border-color: #fff;
     color: #fff;
     font-size: 17px;
@@ -84,7 +157,9 @@ section{
     transition: box-shadow 0.18s;
     box-shadow: 0 2px 8px rgba(0 0 0 / 0.2)
 }
-
+.card span{
+    margin-bottom: 5px;
+}
 .cards{
     align-items: center;
 }
@@ -113,29 +188,33 @@ section{
 }
 
 .uncheckBtn {
-    background-image: url("./img/eye-slash-regular.svg");
+    background-image: url("./img/radio_button_unchecked.svg");
     background-size: cover;
     width: 18px;
     height: 18px;
     margin-right: 5px;
+    margin-top: 3px; 
 }
 
 .checkBtn {
-    background-image: url("./img/eye-regular.svg");
+    background-image: url("./img/radio_button_checked.svg");
     background-size: cover;
     width: 18px;
     height: 18px;
     margin-right: 5px;
+    margin-top: 3px; 
 }
 
 .editBtn{
     background-image: url("./img/edit.svg");  
-    float: right;  
+    float: right; 
+    margin-top: 3px;  
 }
 
 .deleteBtn{
     background-image: url("./img/trash.svg");   
     float: right;
+    margin-top: 3px; 
 }
 
 .inputWithBtn{
@@ -147,7 +226,7 @@ section{
     width: 30px; 
     height: 35px;
     border-radius: 5px;
-    margin: 0 0 5px 0;
+    margin: 0 3px 5px 3px;
     background-color: #fff;
     outline: none;
     z-index: 1;
@@ -165,8 +244,8 @@ section{
 .inputSearch{
     display: inline;
     position: relative;
-    padding: 0.5rem 0.5rem;
-    width: 390px;
+    padding: 6px 6px 3px 6px;
+    width: 396px;
     height: 35px;
     background-color: white;
     border: 1px solid #FFE4E1;
@@ -195,12 +274,12 @@ section{
     width: 20px; 
     height: 25px;
     border-radius: 5px;
-    margin: 5px 0 0 0;
     background-color: transparent;
     outline: none;
     z-index: 1;
     padding: 10px;
     background-size: 15px;
+    margin: 0 3px 0 3px
 }
 
 .editInput{
@@ -297,4 +376,38 @@ form #difference{
     color: red;
     text-align: center;
     margin-left: 0;
+}
+header #exit{
+    background-color: #4b7e4b;
+    margin-left: 100px;
+    border: none;
+    width: 50px;
+    height: 20px;
+    border-radius: 3px;
+    margin: 0;
+}
+
+#inputAddName{
+    width: 300px;
+    height: 25px;
+    margin-bottom: 5px;
+    padding: 3px 3px 3px 5px;
+}
+#inputAddYear{
+    width: 50px;
+    height: 25px;
+    margin-bottom: 5px;
+    padding: 3px 3px 3px 5px;
+}
+#addBtn{
+    background-image: url('./img/4436481.png');
+    width: 30px;
+    height: 25px;
+    margin-bottom: 5px;
+}
+#closeBtn{
+    height: 25px;
+    width: 30px;
+    margin-bottom: 5px;
+    background-image: url('./img/cancel2.svg')
 }
