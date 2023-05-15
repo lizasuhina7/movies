@@ -4,9 +4,7 @@ const registerStr = form.querySelector('#registerStr')
 const alreadyCreate = form.querySelector('#alreadyCreateUser')
 const showPass = form.querySelector('.showPass')
 
-const url = 'http://51.250.108.47'
-//const url = 'http://localhost:8003'
-
+import {url} from './config.js'
 
 form.addEventListener('submit', function(event){
     event.preventDefault()
