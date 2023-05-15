@@ -1,3 +1,5 @@
+import {url} from './config.js'
+
 window.addEventListener('DOMContentLoaded', () => {
     if(localStorage.getItem('token') != null){
 
@@ -13,15 +15,12 @@ window.addEventListener('DOMContentLoaded', () => {
         const cardsWatch = document.getElementById('cardsWatch')
 
         const addBtnPlane = document.getElementById('addBtnPlane')
+        const exitBtn = document.getElementById('exit')
 
-	const url = 'http://51.250.108.47'
-	//const url = 'http://localhost:8003'
         const btnDelete = 'button deleteBtn'
         const btnEdit = 'button editBtn'
         const checkBtn = 'button checkBtn'
         const uncheckBtn = 'button uncheckBtn'
-
-        //ошибка для пользователя
 
         const createObj = (nameMovie, year = 0) => ({
             "movie_name": nameMovie,
@@ -33,7 +32,7 @@ window.addEventListener('DOMContentLoaded', () => {
             return `
             <button class="button ${checked}" name="${id}"></button> 
             <div class="edit" style="display: none">
-                <input type="text" minlength="5" maxlength="40" class="editInput" name=${id}>
+                <input type="text" minlength="5" maxlength="40" class="editInput" name="${id}">
                 <button class="button btnEditInput" id="${id}"></button>
                 <button class="button btnCancelInput" id="cancel ${id}"></button>
             </div>
@@ -298,30 +297,56 @@ window.addEventListener('DOMContentLoaded', () => {
         })   
 
         addBtnPlane.addEventListener('click', () => {
-            let inputPlaneValue = inputPlane.value
-            if(inputPlaneValue != ''){
-                const splitedInput = inputPlaneValue.split(', ')
-                let year = splitedInput[1] || 0 //проверка на наличие 2го элемента массива splitedInput
-                async function addMovie(){
-                    try{
-                        const response = await request(`${url}/api/movie`, 'POST', createObj(splitedInput[0], year))
-                        if(response.status == 200){
-                            const answer = await response.json()
-                            const div = document.createElement('div')
-                            div.className = 'card'
-                            div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
-                            cardsPlane.appendChild(div)
-                            inputPlane.value = ''
-                            eventForAllButtonInCard(document.getElementsByClassName(`${btnDelete}`), document.getElementsByClassName(`${btnEdit}`), document.getElementsByClassName(`${uncheckBtn}`))
-                        } else{
-                            throw new Error()
+            if(addInputAndBtn.style.display == 'none'){
+                const addInputAndBtn = document.getElementById('addInputAndBtn')
+                const emptyField = document.getElementById('emptyField')
+                addInputAndBtn.style.display = 'flex'
+                const addBtn = document.getElementById('addBtn')
+                const closeBtn = document.getElementById('closeBtn')
+                const nameInput = document.getElementById('inputAddName')
+                const yearInput = document.getElementById('inputAddYear')
+
+                closeBtn.addEventListener('click', () => {
+                    nameInput.value = ''
+                    yearInput.value = ''
+                    addInputAndBtn.style.display = 'none'
+                })
+
+                addBtn.addEventListener('click', () => {
+                    const nameValue = nameInput.value
+                    
+                    if(nameValue != ''){
+                        emptyField.style.display = 'none'
+                        nameInput.style.border = '0.5px solid black'
+                        const yearValue = yearInput.value || 0 //проверка на наличие года
+                        async function addMovie(){
+                            try{
+                                const response = await request(`${url}/api/movie`, 'POST', createObj(nameValue, yearValue))
+                                if(response.status == 200){
+                                    const answer = await response.json()
+                                    const div = document.createElement('div')
+                                    div.className = 'card'
+                                    div.innerHTML = createCard(answer.movie_name, answer.year, answer.movie_id, 'uncheckBtn')
+                                    cardsPlane.appendChild(div)
+                                    eventForAllButtonInCard(document.getElementsByClassName(`${btnDelete}`), document.getElementsByClassName(`${btnEdit}`), document.getElementsByClassName(`${uncheckBtn}`))
+                                } else{
+                                    throw new Error()
+                                }
+                            } catch(error){
+                                console.error(error)
+                                alert('Error: ' + error.message)
+                            }
                         }
-                    } catch(error){
-                        console.error(error)
-                        alert('Error: ' + error.message)
+                        addMovie()
+                    }else{
+                        emptyField.style.display = 'block'
+                        nameInput.style.border = '2px solid red'
+                        //поле для кретика либо по потери фокуса закрываются инпуты
+                        //'поле не заполенено'
                     }
-                }
-                addMovie()
+                })
+            } else{
+                addInputAndBtn.style.display = 'none'
             }
         })
 
@@ -352,7 +377,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         }
                     } catch(error){
                         console.error(error)
-                        alert('Error: ' + error.message)
+                        window.location.href = url
                     }
                 }
                 getPlaneMovies() // вызов асинхронной функции при клике на кнопку planeBtn, при условии, что 
@@ -388,7 +413,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         }
                     } catch(error){
                         console.error(error)
-                        alert('Error: ' + error.message)
+                        window.location.href = url
                     }
                 }
                 getPlaneMovies()
@@ -397,7 +422,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         })
 
-        const exitBtn = document.getElementById('exit')
         exitBtn.addEventListener('click', function(){
             async function logoutUser(){
                 const response = await request(`${url}/api/auth/logout`, 'POST')
