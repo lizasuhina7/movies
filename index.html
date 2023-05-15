@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MovieService</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="./img/283038.png" type="image/png">
 </head>
 <header>
-    <button id="exit">Exit</button> 
+    <button id="exit">Выход</button> 
 </header>
 <body>
     <section>
@@ -16,11 +17,20 @@
             <div id="plane">
                 <button class="mainBtn" id="btnPlane">Запланированные фильмы</button>
                 <div id="divWithBtnPlane" style="display:none">
+                    <!-- Инпут и кнопки для поиска -->
                     <div class="inputWithBtn">
-                        <input type="search" maxlength="40" class="inputSearch" id="inputPlane" placeholder="Введите фильм в формате 'Фильм, год выхода'">
+                        <input type="search" maxlength="40" class="inputSearch" id="inputPlane" placeholder="Поиск...">
                         <button class="button searchBtn" id="searchBtnPlane"></button>
                         <button class="button addBtn" id="addBtnPlane"></button>
                     </div>
+                    <!-- Инпуты и кнопка для добавления фильма -->
+                    <div class="inputWithBtn" id="addInputAndBtn" style="display: none">
+                        <input type="text" id="inputAddName" class="inputSearch" maxlength="30" placeholder="Название фильма/сериала">
+                        <input type="text" id="inputAddYear" class="inputSearch" maxlength="4" placeholder="Год">
+                        <button class="button" id="addBtn"></button>
+                        <button class="button" id="closeBtn"></button><br>
+                    </div>
+                    <div id="emptyField" style="color:red; display:none">Поле не заполнено</div>
                     <div class="cards" id="cardsPlane"></div>
                 </div>
             </div>
@@ -28,7 +38,7 @@
                 <button class="mainBtn" id="btnWatch">Просмотренные фильмы</button>
                 <div id="divWithBtnWatch" style="display:none">
                     <div class="inputWithBtn">
-                        <input type="search" maxlength="40" class="inputSearch" id="inputWatch" placeholder="Введите фильм в формате 'Фильм, год выхода'">
+                        <input type="search" maxlength="40" class="inputSearch" id="inputWatch" placeholder="Поиск...">
                         <button class="button searchBtn" id="searchBtnWatch"></button>
                     </div>
                     <div class="cards" id="cardsWatch"></div>
@@ -37,6 +47,6 @@
         </div> 
     </section>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
